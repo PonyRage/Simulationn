@@ -26,4 +26,5 @@ public class Coordinates {
         result = 31 * result + y.hashCode();
         return result;
     }
+
 }

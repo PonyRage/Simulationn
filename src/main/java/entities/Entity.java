@@ -11,4 +11,8 @@ abstract public class Entity {
     public Entity(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
+
+    public Coordinates getCoordinates() {
+        return this.coordinates;
+    }
 }
