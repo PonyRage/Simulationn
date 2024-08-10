@@ -2,17 +2,23 @@ package worldRenderer;
 
 import coordinates.Coordinates;
 import entities.Entity;
+import entities.Sheep;
+import tileManager.TileManager;
 import world.World;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WorldRenderer extends JPanel implements Runnable{
+public class WorldRenderer extends JPanel implements Runnable {
 
     private final World world;
     Thread gameThread;
-    int fps = 60;
-    int tileSize = 32;
+    int fps = 10;
+    public int tileSize = 48;
+    TileManager tileManager;
+    private final SheepRenderer sheepRenderer;
 
     public WorldRenderer(World world) {
         this.world = world;
@@ -22,20 +28,16 @@ public class WorldRenderer extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.setFocusable(true);
 
+        tileManager = new TileManager(world, this);
+        this.sheepRenderer = new SheepRenderer(tileSize);
     }
 
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
-    public void render() {
 
-for(Coordinates coord : world.getEntities().keySet())
-{
-    Entity entity = world.getEntities().get(coord);
-    System.out.println("Entity " + entity.getClass().getSimpleName() + " at " + coord.x + ", " + coord.y);
-}
-    }
+
 
     @Override
     public void run() {
@@ -56,18 +58,41 @@ for(Coordinates coord : world.getEntities().keySet())
     }
 
     public void update() {
-
+        List<Entity> entities = new ArrayList<>(world.getEntities().values());
+for (Entity entity : world.getEntities().values()) {
+    if (entity instanceof Sheep) {
+        Sheep sheep = (Sheep) entity;
+        // Добавляем отладочную информацию о текущих координатах овцы
+        System.out.println("Updating sheep at: " + sheep.getCoordinates().getX() + ", " + sheep.getCoordinates().getY());
+         sheep.moveRandomly(entities);
+        // Проверяем координаты после перемещения
+        System.out.println("Moved sheep to: " + sheep.getCoordinates().getX() + ", " + sheep.getCoordinates().getY());
     }
+}
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        for (int i = 0; i < world.row; i++) {
-            for (int j = 0; j < world.col; j++) {
-                g2d.setColor(Color.BLACK);
-                g2d.fillRect(j * tileSize, i * tileSize, tileSize, tileSize);
+        tileManager.drawTiles(g2d);
+
+        g2d.setColor(Color.RED);
+        for (int y = 0; y <= world.row; y++) {
+            g2d.drawLine(0, y * tileSize, world.col * tileSize, y * tileSize);
+        }
+        for (int x = 0; x <= world.col; x++) {
+            g2d.drawLine(x * tileSize, 0, x * tileSize, world.row * tileSize);
+        }
+
+        for (Entity entity : world.getEntities().values()) {
+            if (entity instanceof Sheep) {
+                Sheep sheep = (Sheep) entity;
+                Coordinates coord = sheep.getCoordinates();
+                // Добавляем отладочную информацию для координат овцы
+                System.out.println("Rendering sheep at: " + coord.getX() + ", " + coord.getY());
+                sheepRenderer.renderSheep(g2d, sheep);
             }
         }
-        render();
         g2d.dispose();
     }
 }

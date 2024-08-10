@@ -8,7 +8,7 @@ public class Main {
         World world = new World(16, 12);
         WorldRenderer worldRenderer = new WorldRenderer(world);
         world.setupDefaultEntityPositions();
-        worldRenderer.render();
+
 
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
