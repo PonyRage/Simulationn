@@ -13,10 +13,10 @@ import java.util.List;
 public class World {
     public int col;
     public int row;
-    private int totalSheeps = 10;
+    private int totalSheeps = 2;
     private int totalTrees = 20;
     private int totalRocks = 20;
-    private int totalFlowers = 10;
+    private int totalFlowers = 3;
     private int totalOrcs = 5;
     HashMap<Coordinates, Entity> entities = new HashMap<>();
     public List<Tree> trees = new ArrayList<>();

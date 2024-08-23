@@ -11,4 +11,10 @@ public class Flower extends Entity{
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
     }
+
+    public Flower(Coordinates coordinates) {
+        super(coordinates);
+        this.worldWidth = 0; // Или другое значение, если это необходимо
+        this.worldHeight = 0; // Или другое значение, если это необходимо
+    }
 }

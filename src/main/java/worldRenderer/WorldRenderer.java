@@ -91,8 +91,16 @@ public class WorldRenderer extends JPanel implements Runnable, KeyListener {
     public void update() {
         List<Entity> entities = new ArrayList<>(world.getEntities().values());
 
-        for (Sheep sheep : world.sheeps) {
-            sheep.moveRandomly(entities);
+        for (Flower flower : world.flowers) {
+            System.out.println("Flower at: " + flower.getCoordinates());
+        }
+        for(Sheep sheep : world.sheeps){
+            if(!world.flowers.isEmpty()){
+                Coordinates goal =  world.flowers.get(0).coordinates;
+                System.out.println("Moving sheep to goal at: " + goal.getX() + ", " + goal.getY());
+                sheep.moveToGoal(goal, world);
+                System.out.println("Sheep new position: " + sheep.getCoordinates().getX() + ", " + sheep.getCoordinates().getY());
+            }
         }
         for (Orc orc : world.orcs) {
             System.out.println("Updating orc at: " + orc.getCoordinates().getX() + ", " + orc.getCoordinates().getY());
@@ -127,6 +135,7 @@ public class WorldRenderer extends JPanel implements Runnable, KeyListener {
 //                System.out.println("Moved orc at: " + orc.getCoordinates().getX() + ", " + orc.getCoordinates().getY());
 //            }
 //        }
+        repaint();
     }
 
     public void paintComponent(Graphics g) {

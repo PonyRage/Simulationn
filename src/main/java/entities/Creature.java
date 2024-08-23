@@ -1,21 +1,52 @@
 package entities;
 
 import coordinates.Coordinates;
+import pathfinder.PathFinding;
+import world.World;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Creature extends Entity {
     private final int worldWidth;
     private final int worldHeight;
+    private final PathFinding pathFinding;
 
     public Creature(Coordinates coordinates, int worldWidth, int worldHeight) {
         super(coordinates);
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+        this.pathFinding = new PathFinding();
     }
 
-    protected boolean isCellOccupied(int x, int y, List<Entity> entities) {
+    public List<Coordinates> findPath(Coordinates goal, World world) {
+        return pathFinding.findPath((Sheep) this, new Flower(goal), world);
+    }
+
+    public void moveToGoal(Coordinates goal, World world) {
+        List<Coordinates> path = findPath(goal, world);
+
+        // Если путь найден
+        if (!path.isEmpty()) {
+            // Двигаемся по пути
+            for (Coordinates nextStep : path) {
+                if (!isCellOccupied(nextStep.getX(), nextStep.getY(), world.getEntities().values())) {
+                    System.out.println("Moving sheep to: " + nextStep.getX() + ", " + nextStep.getY());
+                    getCoordinates().setX(nextStep.getX());
+                    getCoordinates().setY(nextStep.getY());
+                    return; // Прекращаем выполнение после первого шага
+                } else {
+                    System.out.println("Cell occupied: " + nextStep.getX() + ", " + nextStep.getY());
+                }
+            }
+        } else {
+            System.out.println("No path found.");
+        }
+    }
+
+    protected boolean isCellOccupied(int x, int y, Collection<Entity> entities) {
         for (Entity entity : entities) {
             if (entity.getCoordinates().getX() == x && entity.getCoordinates().getY() == y) {
                 return true;
